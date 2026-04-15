@@ -181,6 +181,21 @@
             color: var(--text-main);
         }
 
+        /* Sub-menú para el correo en Nav */
+        .nav-email-reveal {
+            display: none;
+            flex-direction: column;
+            padding: 0.5rem 1.5rem 1rem 1.5rem;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-email-reveal.show {
+            display: flex;
+            animation: fadeInDropdown 0.2s ease-out;
+        }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -469,7 +484,14 @@
                 <div class="nav-dropdown-container">
                     <button class="nav-link-btn" onclick="toggleNavContact(event)">Contacto ▾</button>
                     <div class="nav-dropdown" id="navContactDropdown">
-                        <a href="mailto:yury.ccotaccallapa.m@gmail.com">Email</a>
+                        <!-- Opción Email con caja desplegable -->
+                        <div class="nav-email-item">
+                            <a href="#" onclick="toggleNavEmail(event)">Email</a>
+                            <div class="nav-email-reveal" id="navEmailReveal">
+                                <span id="navEmailText" class="mono" style="font-size: 0.75rem; color: var(--text-muted);">yury.ccotaccallapa.m@gmail.com</span>
+                                <button class="copy-btn" onclick="copyNavEmail(event, this)">Copiar</button>
+                            </div>
+                        </div>
                         <a href="https://www.linkedin.com/in/yury-ccotaccallapa" target="_blank">LinkedIn</a>
                         <a href="https://github.com/yuryccota" target="_blank">GitHub</a>
                     </div>
@@ -663,6 +685,13 @@
             document.getElementById("navContactDropdown").classList.toggle("show");
         }
 
+        // Desplegar el recuadro de email dentro de Nav Contacto
+        function toggleNavEmail(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.getElementById("navEmailReveal").classList.toggle("show");
+        }
+
         // Copiar correo al portapapeles
         function copyEmail() {
             const emailText = document.getElementById("emailText").innerText;
@@ -685,6 +714,28 @@
             }, 2000);
         }
 
+        // Copiar correo al portapapeles (Nav)
+        function copyNavEmail(event, btnElement) {
+            event.stopPropagation();
+            const emailText = document.getElementById("navEmailText").innerText;
+            const tempInput = document.createElement("input");
+            tempInput.value = emailText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            btnElement.innerText = '¡COPIADO!';
+            btnElement.style.color = 'var(--bg-color)';
+            btnElement.style.backgroundColor = 'var(--text-main)';
+            
+            setTimeout(() => {
+                btnElement.innerText = 'COPIAR';
+                btnElement.style.color = 'var(--text-main)';
+                btnElement.style.backgroundColor = 'transparent';
+            }, 2000);
+        }
+
         // Cerrar los dropdowns si se hace clic afuera
         window.onclick = function(event) {
             // Cerrar dropdown de Email
@@ -699,6 +750,10 @@
                 const navDrop = document.getElementById("navContactDropdown");
                 if (navDrop && navDrop.classList.contains('show')) {
                     navDrop.classList.remove('show');
+                }
+                const navEmailReveal = document.getElementById("navEmailReveal");
+                if (navEmailReveal && navEmailReveal.classList.contains('show')) {
+                    navEmailReveal.classList.remove('show');
                 }
             }
         }
